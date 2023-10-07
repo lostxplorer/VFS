@@ -43,7 +43,7 @@ int main()
         }
         else if (input_commands[0] == "cd")
         {
-            cd(command, parser, input_commands);
+            ascd(command, parser, input_commands);
         }
         else if (input_commands[0] == "touch")
         {

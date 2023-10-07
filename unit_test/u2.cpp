@@ -3,6 +3,8 @@
 
 #include "FileSystemManager.h"
 #include "ExecutableCommands.h"
+#include "Parser.h"
+#include "FilesystemOperations.h"
 #include "Directory.h"
 #include "IFile.h"
 
@@ -10,48 +12,39 @@ using ::testing::_;
 using ::testing::Return;
 
 
-class MockExecutableCommands : public FileSystemManager
-{
-    public:
-    MOCK_METHOD(bool, find, (const std::string&));
+class MockCommand : public ExecutableCommands {
+public:
+    MOCK_METHOD(bool, cd, (const std::string& directory), (override));
+    MOCK_METHOD(bool, find, (const std::string& directory));
 };
 
-using ::testing::_;
-using ::testing::Return;
+TEST(MkdirTest, MockCdAndFind) {
+    MockCommand mockCommand;  // Create a mock object
+    
+    // Set expectations for cd and find functions
+    EXPECT_CALL(mockCommand, cd("dir1"))
+        .Times(1)
+        .WillOnce(Return(true));
+    
+    EXPECT_CALL(mockCommand, cd(".."))
+        .Times(1)
+        .WillOnce(Return(true));
 
-class MkdirTest : public ::testing::Test {
-protected:
-    MockExecutableCommands mockCommand;
-    // Other necessary setup for your test
-};
+    // Create your Parser instance with the mockCommand
+    Parser parser;
 
-TEST_F(MkdirTest, FindReturnsTrue) {
-    // Arrange
-    const std::string directoryName = "existing_directory";
-    ExecutableCommands command;
-    EXPECT_CALL(mockCommand, find(directoryName)).WillOnce(Return(true));
+    // Prepare input_commands for testing
+    std::vector<std::string> input_commands = {"mkdir", "dir1/dir2"};
 
-    EXPECT_TRUE(command.rmdir("existing_directory"));
+    // Call the mkdir function you want to test
+    
+    mkdir(mockCommand, parser, input_commands);
 }
-
-TEST_F(MkdirTest, FindReturnsFalse) {
-    // Arrange
-    const std::string directoryName = "non_existing_directory";
-    ExecutableCommands command;
-    EXPECT_CALL(mockCommand, find(directoryName)).WillOnce(Return(false));
-
-    // Act
-    // Call your mkdir function that uses the mockCommand object
-    EXPECT_TRUE(command.rmdir("existing_directory"));
-
-    // Assert
-    // Add your assertions here
-}
-
 
 
 int main(int argc, char **argv)
 {
+    testing::InitGoogleMock(&argc, argv);
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }

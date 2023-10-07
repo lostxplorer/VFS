@@ -24,7 +24,8 @@ void mkdir(ExecutableCommands& command, Parser& parser, const std::vector<std::s
         {
             if (command.find(directories.back()))
             {
-                std::cout << "File " << directories.back() << " already exist" << std::endl;
+                std::cout << "Error: "<< directories.back() << " already exist" << std::endl;
+                continue;
             }
             
             command.mkdir(directories.back());
@@ -111,7 +112,8 @@ void touch(ExecutableCommands& command, Parser& parser, const std::vector<std::s
         {
             if (command.find(directories.back()))
             {
-                std::cout << "File " << directories.back() << " already exist" << std::endl;
+                std::cout << "Error: " << directories.back() << " already exist" << std::endl;
+                continue;
             }
             
             command.touch(directories.back());
@@ -145,7 +147,7 @@ void rm(ExecutableCommands& command, const std::vector<std::string>& input_comma
     }
 }
 
-void cd(ExecutableCommands& command, Parser& parser, const std::vector<std::string>& input_commands)
+void ascd(ExecutableCommands& command, Parser& parser, const std::vector<std::string>& input_commands)
 {
     if (input_commands.size() == 1) 
     {

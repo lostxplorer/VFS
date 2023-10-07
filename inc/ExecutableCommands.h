@@ -14,16 +14,16 @@ class ExecutableCommands: public FileSystemManager
 {
 public:
     ExecutableCommands();
-    void mkdir(const std::string& directory_name);
-    bool rmdir(const std::string& directory_name);
-    std::string& pwd();
-    bool cd(const std::string& directory_name);
-    void ls(const std::string& flag);
-    bool touch(const std::string& file_name);
-    bool rm(const std::string& file_name);
-    bool find(const std::string& name);
-    std::string find_by_time(const std::string& time);
-    std::shared_ptr<Directory> get_current_directory();
+    virtual void mkdir(const std::string& directory_name);
+    virtual bool rmdir(const std::string& directory_name);
+    virtual std::string& pwd();
+    virtual bool cd(const std::string& directory_name);
+    virtual void ls(const std::string& flag);
+    virtual bool touch(const std::string& file_name);
+    virtual bool rm(const std::string& file_name);
+    virtual bool find(const std::string& name);
+    virtual std::string find_by_time(const std::string& time);
+    virtual std::shared_ptr<Directory> get_current_directory();
 };
 
 #endif
