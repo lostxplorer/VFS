@@ -4,7 +4,7 @@
 #include "IFileSystemComponent.h"
 #include "IFile.h"
 
-class Directory : public IFileSystemComponent
+class Directory : public IFileSystemComponent, public std::enable_shared_from_this<Directory>
 {
 private:
     std::vector<std::shared_ptr<IFileSystemComponent>> sub_directory;

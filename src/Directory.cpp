@@ -37,11 +37,7 @@ void Directory::add_file_system_component(std::shared_ptr<IFileSystemComponent> 
     sub_directory.push_back(sub_dir);
     if (sub_dir->is_directory()) 
     {
-        Directory* sub_dir_ptr = dynamic_cast<Directory*>(sub_dir.get());
-        if (sub_dir_ptr)
-        {
-            sub_dir_ptr->super_directory = std::shared_ptr<Directory>(this);
-        }
+        std::static_pointer_cast<Directory>(sub_dir)->super_directory = shared_from_this();
     }
 }
 

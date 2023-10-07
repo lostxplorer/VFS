@@ -9,31 +9,29 @@ void mkdir(ExecutableCommands& command, Parser& parser, const std::vector<std::s
     for (size_t index = 1; index < input_commands.size(); index++)
     {
         std::vector<std::string> directories = parser.split_path(input_commands[index]);
-        if (directories.empty())
+        bool cd_success = true;
+        size_t subdir_index = 0;
+        for (subdir_index = 0; subdir_index < directories.size() - 1; subdir_index++)
         {
-            command.mkdir(input_commands[index]);
+            if(!command.cd(directories[subdir_index]))
+            {
+                cd_success = false;
+                std::cout << "Error: " << directories[subdir_index] << " directory not found." << std::endl;
+                break;
+            }
         }
-        else
+        if(cd_success)
         {
-            bool cd_success = true;
-            size_t subdir_index = 0;
-            for (subdir_index = 0; subdir_index < directories.size() - 1; subdir_index++)
+            if (command.find(directories.back()))
             {
-                if(!command.cd(directories[subdir_index]))
-                {
-                    cd_success = false;
-                    std::cout << "Error: " << directories[subdir_index] << " directory not found." << std::endl;
-                    break;
-                }
+                std::cout << "File " << directories.back() << " already exist" << std::endl;
             }
-            if(cd_success)
-            {
-                command.mkdir(directories.back());
-            }
-            for (size_t super_directorydir_index = subdir_index; super_directorydir_index > 0; super_directorydir_index--)
-            {
-                command.cd("..");
-            }
+            
+            command.mkdir(directories.back());
+        }
+        for (size_t super_directory = subdir_index; super_directory > 0; super_directory--)
+        {
+            command.cd("..");
         }
     }
 }
@@ -93,36 +91,34 @@ void touch(ExecutableCommands& command, Parser& parser, const std::vector<std::s
 {
     if (input_commands.size() == 1) 
     {
-        std::cout << "Usage: touch <file_name>" << std::endl;
+        std::cout << "Usage: mkdir <directory_name>" << std::endl;
     }
     for (size_t index = 1; index < input_commands.size(); index++)
     {
         std::vector<std::string> directories = parser.split_path(input_commands[index]);
-        if (directories.empty())
+        bool cd_success = true;
+        size_t subdir_index = 0;
+        for (subdir_index = 0; subdir_index < directories.size() - 1; subdir_index++)
         {
-            command.touch(input_commands[index]);
+            if(!command.cd(directories[subdir_index]))
+            {
+                cd_success = false;
+                std::cout << "Error: " << directories[subdir_index] << " directory not found." << std::endl;
+                break;
+            }
         }
-        else
+        if(cd_success)
         {
-            bool cd_success = true;
-            size_t subdir_index = 0;
-            for (subdir_index; subdir_index < directories.size() - 1; subdir_index++)
+            if (command.find(directories.back()))
             {
-                if(!command.cd(directories[subdir_index]))
-                {
-                    cd_success = false;
-                    std::cout << "Error: " << directories[subdir_index] << " directory not found." << std::endl;
-                    break;
-                }
+                std::cout << "File " << directories.back() << " already exist" << std::endl;
             }
-            if(cd_success)
-            {
-                command.touch(directories.back());
-            }
-            for (size_t super_directorydir_index = subdir_index; super_directorydir_index > 0; super_directorydir_index--)
-            {
-                command.cd("..");
-            }
+            
+            command.touch(directories.back());
+        }
+        for (size_t super_directory = subdir_index; super_directory > 0; super_directory--)
+        {
+            command.cd("..");
         }
     }
 }
