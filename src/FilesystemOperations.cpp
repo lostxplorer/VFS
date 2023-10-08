@@ -54,8 +54,11 @@ void rmdir(ExecutableCommands& command, Parser& parser, const std::vector<std::s
             }
             else
             {
-                for (size_t subdir_index = 0; subdir_index < directories.size() - 1; subdir_index++)
+                size_t subdir_index;
+                bool cd_success = false;
+                for (subdir_index = 0; subdir_index < directories.size() - 1; subdir_index++)
                 {
+                    cd_success = true;
                     command.cd(directories[subdir_index]);
                 }
                 auto lastDirectory = command.get_current_directory()->find_directory(directories.back());
@@ -82,8 +85,11 @@ void rmdir(ExecutableCommands& command, Parser& parser, const std::vector<std::s
                 {
                     std::cout << "Error: Directory '" << directories.back() << "' not found." << std::endl;
                 }
+                for (size_t super_directory = subdir_index; super_directory > 0; super_directory--)
+                {
+                    command.cd("..");
+                }
             }
-            command.cd("..");
         }
     }
 }
@@ -112,7 +118,7 @@ void touch(ExecutableCommands& command, Parser& parser, const std::vector<std::s
         {
             if (command.find(directories.back()))
             {
-                std::cout << "Error: " << directories.back() << " already exist" << std::endl;
+                std::cout << "Error: "<< directories.back() << " already exist" << std::endl;
                 continue;
             }
             
@@ -125,24 +131,40 @@ void touch(ExecutableCommands& command, Parser& parser, const std::vector<std::s
     }
 }
 
-void rm(ExecutableCommands& command, const std::vector<std::string>& input_commands)
+void rm(ExecutableCommands& command, Parser& parser, const std::vector<std::string>& input_commands)
 {
     if (input_commands.size() == 1) 
     {
-        std::cout << "Usage: rm <file_name>" << std::endl;
+        std::cout << "Usage: mkdir <directory_name>" << std::endl;
     }
-    else
+    for (size_t index = 1; index < input_commands.size(); index++)
     {
-        for (size_t index = 1; index < input_commands.size(); index++)
+        std::vector<std::string> directories = parser.split_path(input_commands[index]);
+        bool cd_success = true;
+        size_t subdir_index = 0;
+        for (subdir_index = 0; subdir_index < directories.size() - 1; subdir_index++)
         {
-            if(command.rm(input_commands[index]))
+            if(!command.cd(directories[subdir_index]))
             {
-                std::cout << "file '" << input_commands[index] << "' is removed." << std::endl;
+                cd_success = false;
+                std::cout << "Error: " << directories[subdir_index] << " directory not found." << std::endl;
+                break;
             }
-            else
+        }
+        if(cd_success)
+        {
+            if (!command.find(directories.back()))
             {
-                std::cout << "Error: file '" << input_commands[index] << "' is not present." << std::endl;
+                std::cout << "Error: " << directories.back() << " already exist" << std::endl;
+                continue;
             }
+            
+            command.rm(directories.back());
+            std::cout << "File " << directories.back() << " Removed ~" << std::endl;
+        }
+        for (size_t super_directory = subdir_index; super_directory > 0; super_directory--)
+        {
+            command.cd("..");
         }
     }
 }

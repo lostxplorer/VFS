@@ -51,7 +51,7 @@ int main()
         }
         else if (input_commands[0] == "rm")
         {
-            rm(command, input_commands);
+            rm(command, parser, input_commands);
         }
         else if (input_commands[0] == "find")
         {
